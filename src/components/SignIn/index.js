@@ -1,22 +1,56 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { createStyles, withStyles } from '@material-ui/core/styles';
 
 import { SignUpLink } from '../SignUp';
-import { PasswordForgetLink } from '../PasswordForget';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import { Avatar, Checkbox, FormControlLabel, TextField } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import { FacebookLoginButton, GoogleLoginButton, TwitterLoginButton } from 'react-social-login-buttons';
+
+
+const styles = (theme) => createStyles({
+  rootBox: {
+    paddingTop: '2rem'
+  },
+  title: {
+    marginTop: '1rem',
+    textAlign: 'center',
+  },
+  socialButton: {
+    height: '2.2rem !important',
+    fontSize: '0.9rem !important',
+    textTransform: 'uppercase',
+  },
+  avatar: {
+    margin: '0 auto',
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+});
 
 const SignInPage = () => (
-  <div>
-    <h1>SignIn</h1>
-    <SignInForm />
-    <SignInGoogle />
-    <SignInFacebook />
-    <SignInTwitter />
-    <PasswordForgetLink />
-    <SignUpLink />
-  </div>
+  <Grid container>
+    <Grid item md={2} lg={3} />
+    <Grid item xs={12} md={8} lg={6}>
+      <SignInForm />
+      <SignInGoogle />
+      <SignInFacebook />
+      <SignInTwitter />
+      <SignUpLink />
+    </Grid>
+    <Grid item md={2} lg={3} />
+  </Grid>
 );
 
 const INITIAL_STATE = {
@@ -63,32 +97,60 @@ class SignInFormBase extends Component {
   };
 
   render() {
+    const { classes } = this.props;
     const { email, password, error } = this.state;
-
     const isInvalid = password === '' || email === '';
-
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="password"
-          value={password}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
+      <div className={classes.rootBox}>
+        <Avatar className={classes.avatar}/>
+        <Typography component="h1" variant="h5" className={classes.title}>
+          Login
+        </Typography>
 
-        {error && <p>{error.message}</p>}
-      </form>
+        <form className={classes.form} onSubmit={this.onSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={this.onChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={this.onChange}
+          />
+          <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          />
+          <Button
+            disabled={isInvalid}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+          {error && <p>{error.message}</p>}
+        </form>
+      </div>
     );
   }
 }
@@ -128,10 +190,13 @@ class SignInGoogleBase extends Component {
 
   render() {
     const { error } = this.state;
+    const { classes } = this.props;
 
     return (
       <form onSubmit={this.onSubmit}>
-        <button type="submit">Sign In with Google</button>
+        <GoogleLoginButton type="submit" className={classes.socialButton} iconSize="1rem">
+          Sign In with Google
+        </GoogleLoginButton>
 
         {error && <p>{error.message}</p>}
       </form>
@@ -174,10 +239,13 @@ class SignInFacebookBase extends Component {
 
   render() {
     const { error } = this.state;
+    const { classes } = this.props;
 
     return (
       <form onSubmit={this.onSubmit}>
-        <button type="submit">Sign In with Facebook</button>
+        <FacebookLoginButton type="submit" className={classes.socialButton} iconSize="1rem">
+          Sign In with Facebook
+        </FacebookLoginButton>
 
         {error && <p>{error.message}</p>}
       </form>
@@ -220,11 +288,13 @@ class SignInTwitterBase extends Component {
 
   render() {
     const { error } = this.state;
+    const { classes } = this.props;
 
     return (
       <form onSubmit={this.onSubmit}>
-        <button type="submit">Sign In with Twitter</button>
-
+        <TwitterLoginButton type="submit" className={classes.socialButton} iconSize="1rem">
+          Sign In with Twitter
+        </TwitterLoginButton>
         {error && <p>{error.message}</p>}
       </form>
     );
@@ -234,21 +304,25 @@ class SignInTwitterBase extends Component {
 const SignInForm = compose(
   withRouter,
   withFirebase,
+  withStyles(styles)
 )(SignInFormBase);
 
 const SignInGoogle = compose(
   withRouter,
   withFirebase,
+  withStyles(styles)
 )(SignInGoogleBase);
 
 const SignInFacebook = compose(
   withRouter,
   withFirebase,
+  withStyles(styles)
 )(SignInFacebookBase);
 
 const SignInTwitter = compose(
   withRouter,
   withFirebase,
+  withStyles(styles)
 )(SignInTwitterBase);
 
 export default SignInPage;

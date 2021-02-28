@@ -2,6 +2,8 @@ import React from 'react';
 
 import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 const needsEmailVerification = authUser =>
   authUser &&
@@ -29,28 +31,30 @@ const withEmailVerification = Component => {
         <AuthUserContext.Consumer>
           {authUser =>
             needsEmailVerification(authUser) ? (
-              <div>
+              <div style={{paddingTop: '2rem', textAlign: 'center'}}>
                 {this.state.isSent ? (
-                  <p>
+                  <Typography variant="p" color="inherit" style={{marginBottom: '1rem', display: 'block'}}>
                     E-Mail confirmation sent: Check your E-Mails (Spam
                     folder included) for a confirmation E-Mail.
                     Refresh this page once you confirmed your E-Mail.
-                  </p>
+                  </Typography>
                 ) : (
-                  <p>
+                  <Typography variant="p" color="inherit" style={{marginBottom: '1rem', display: 'block'}}>
                     Verify your E-Mail: Check your E-Mails (Spam folder
                     included) for a confirmation E-Mail or send
                     another confirmation E-Mail.
-                  </p>
+                  </Typography>
                 )}
 
-                <button
-                  type="button"
+                <Button
                   onClick={this.onSendEmailVerification}
                   disabled={this.state.isSent}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
                 >
                   Send confirmation E-Mail
-                </button>
+                </Button>
               </div>
             ) : (
               <Component {...this.props} />

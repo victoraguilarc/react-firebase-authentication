@@ -5,12 +5,44 @@ import { compose } from 'recompose';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
+import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
+import { createStyles, withStyles } from '@material-ui/core/styles';
+
+const styles = (theme) => createStyles({
+  rootBox: {
+    paddingTop: '2rem'
+  },
+  title: {
+    marginTop: '1rem',
+    textAlign: 'center',
+  },
+  avatar: {
+    margin: '0 auto',
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+});
 
 const SignUpPage = () => (
-  <div>
-    <h1>SignUp</h1>
-    <SignUpForm />
-  </div>
+  <Grid container>
+    <Grid item md={2} lg={3} />
+    <Grid item xs={12} md={8} lg={6}>
+      <SignUpForm />
+    </Grid>
+    <Grid item md={2} lg={3} />
+  </Grid>
 );
 
 const INITIAL_STATE = {
@@ -99,64 +131,123 @@ class SignUpFormBase extends Component {
       email === '' ||
       username === '';
 
+    const { classes } = this.props;
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          name="passwordTwo"
-          value={passwordTwo}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <label>
-          Admin:
-          <input
-            name="isAdmin"
-            type="checkbox"
-            checked={isAdmin}
-            onChange={this.onChangeCheckbox}
-          />
-        </label>
-        <button disabled={isInvalid} type="submit">
-          Sign Up
-        </button>
+      <div className={classes.rootBox}>
+        <Avatar className={classes.avatar}/>
+        <Typography component="h1" variant="h5" className={classes.title}>
+          Register
+        </Typography>
+        <form className={classes.form} onSubmit={this.onSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                autoComplete="username"
+                name="username"
+                variant="outlined"
+                required
+                fullWidth
+                id="username"
+                label="Full Name"
+                value={username}
+                onChange={this.onChange}
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={email}
+                onChange={this.onChange}
+                autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="passwordOne"
+                label="Password"
+                type="password"
+                id="passwordOne"
+                value={passwordOne}
+                onChange={this.onChange}
+                autoComplete="current-password"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="passwordTwo"
+                label="Confirm Password"
+                type="password"
+                id="passwordTwo"
+                value={passwordTwo}
+                onChange={this.onChange}
+                autoComplete="current-password"
+              />
+            </Grid>
 
-        {error && <p>{error.message}</p>}
-      </form>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={<Checkbox checked={isAdmin} onChange={this.onChangeCheckbox} value="allowExtraEmails" color="primary" />}
+                label="Admin"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              {error && <p>{error.message}</p>}
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={isInvalid}
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link to={ROUTES.SIGN_IN} variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
     );
   }
 }
 
 const SignUpLink = () => (
-  <p>
-    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-  </p>
+  <Grid container>
+    <Grid item xs>
+      <Link to={ROUTES.PASSWORD_FORGET} variant="body2">
+        Forgot password?
+      </Link>
+    </Grid>
+    <Grid item>
+      <Link to={ROUTES.SIGN_UP} variant="body2">
+        {"Don't have an account? Sign Up"}
+      </Link>
+    </Grid>
+  </Grid>
 );
 
 const SignUpForm = compose(
   withRouter,
   withFirebase,
+  withStyles(styles),
 )(SignUpFormBase);
 
 export default SignUpPage;
